@@ -28,11 +28,11 @@ public class TimeEntryApiTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private TimeEntry timeEntry = new TimeEntry(123L, 456L, LocalDate.parse("2017-01-08"), 8);
+    private final ThreadLocal<TimeEntry> timeEntry = ThreadLocal.withInitial(() -> new TimeEntry(123L, 456L, LocalDate.parse("2017-01-08"), 8));
 
     @Test
     public void testCreate() throws Exception {
-        ResponseEntity<String> createResponse = restTemplate.postForEntity("/time-entries", timeEntry, String.class);
+        ResponseEntity<String> createResponse = restTemplate.postForEntity("/time-entries", timeEntry.get(), String.class);
 
 
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -115,7 +115,7 @@ public class TimeEntryApiTest {
     }
 
     private Long createTimeEntry() {
-        HttpEntity<TimeEntry> entity = new HttpEntity<>(timeEntry);
+        HttpEntity<TimeEntry> entity = new HttpEntity<>(timeEntry.get());
 
         ResponseEntity<TimeEntry> response = restTemplate.exchange("/time-entries", HttpMethod.POST, entity, TimeEntry.class);
 
