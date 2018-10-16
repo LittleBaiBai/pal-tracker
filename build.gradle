@@ -25,7 +25,7 @@ dependencies {
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.1")
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile("org.springframework.boot:spring-boot-starter-jdbc")
-    compile("mysql:mysql-connector-java:8.0.12")
+    testCompile("mysql:mysql-connector-java:8.0.12")
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 
