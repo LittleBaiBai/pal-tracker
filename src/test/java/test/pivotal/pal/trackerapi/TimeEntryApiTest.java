@@ -2,20 +2,14 @@ package test.pivotal.pal.trackerapi;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.mysql.cj.jdbc.MysqlDataSource;
-import io.pivotal.pal.tracker.PalTrackerApplication;
 import io.pivotal.pal.tracker.TimeEntry;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -23,19 +17,14 @@ import java.util.TimeZone;
 
 import static com.jayway.jsonpath.JsonPath.parse;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = PalTrackerApplication.class, webEnvironment = RANDOM_PORT)
-public class TimeEntryApiTest {
-
-    @Autowired
-    private TestRestTemplate restTemplate;
+public class TimeEntryApiTest extends BaseApiTest {
 
     private final ThreadLocal<TimeEntry> timeEntry = ThreadLocal.withInitial(() -> new TimeEntry(123L, 456L, LocalDate.parse("2017-01-08"), 8));
 
     @Before
     public void setUp() throws Exception {
+        super.setUp();
         MysqlDataSource dataSource = new MysqlDataSource();
         dataSource.setUrl(System.getenv("SPRING_DATASOURCE_URL"));
 
@@ -48,7 +37,6 @@ public class TimeEntryApiTest {
     @Test
     public void testCreate() throws Exception {
         ResponseEntity<String> createResponse = restTemplate.postForEntity("/time-entries", timeEntry.get(), String.class);
-
 
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
@@ -119,9 +107,7 @@ public class TimeEntryApiTest {
     public void testDelete() throws Exception {
         Long id = createTimeEntry();
 
-
         ResponseEntity<String> deleteResponse = restTemplate.exchange("/time-entries/" + id, HttpMethod.DELETE, null, String.class);
-
 
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 

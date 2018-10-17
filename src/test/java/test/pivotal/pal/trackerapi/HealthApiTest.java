@@ -15,17 +15,11 @@ import static com.jayway.jsonpath.JsonPath.parse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = PalTrackerApplication.class, webEnvironment = RANDOM_PORT)
-public class HealthApiTest {
-
-    @Autowired
-    private TestRestTemplate restTemplate;
+public class HealthApiTest extends BaseApiTest {
 
     @Test
     public void healthTest() {
-        ResponseEntity<String> response = this.restTemplate.getForEntity("/health", String.class);
-
+        ResponseEntity<String> response = restTemplate.getForEntity("/health", String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
